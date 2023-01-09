@@ -4,7 +4,6 @@ const db = require("../models/index");
 const app = require("../app");
 let server;
 let agent;
-// hey
 
 function getCsrfToken(res) {
   var $ = cheerio.load(res.text);
@@ -106,7 +105,7 @@ describe("Test case for database", () => {
     var res = await agent.get("/todos");
     var csrfToken = getCsrfToken(res);
     
-    //using privious used test casse status
+    //using previous used test casse status
     const Todos = await agent.get("/todos").set("Accept", "application/json");
     const parseTodos = JSON.parse(Todos.text);
     const countTodaysTodos = parseTodos.dueToday.length;
