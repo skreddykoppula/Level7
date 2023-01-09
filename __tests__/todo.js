@@ -6,7 +6,6 @@ let server;
 let agent;
 // hey
 
-
 function getCsrfToken(res) {
   var $ = cheerio.load(res.text);
   return $("[name=_csrf]").val();
@@ -82,7 +81,6 @@ describe("Test case for database", () => {
     await agent.post("/todos").send({
       title: "play cricket",
       dueDate: new Date().toISOString(),
-      completed: false,
       _csrf: csrfToken,
     });
 
@@ -90,9 +88,10 @@ describe("Test case for database", () => {
     const parseTodos = JSON.parse(Todos.text);
     const countTodaysTodos = parseTodos.dueToday.length;
     const Todo = parseTodos.dueToday[countTodaysTodos - 1];
-    const status = Todo.completed ? false : true;
+    var status = true;
     res = await agent.get("/todos");
     csrfToken = getCsrfToken(res);
+
 
     const changeTodo = await agent
       .put(`/todos/${Todo.id}`)
@@ -106,21 +105,14 @@ describe("Test case for database", () => {
     await login(agent, "skreddy@gmail.com", "sk");
     var res = await agent.get("/todos");
     var csrfToken = getCsrfToken(res);
-    await agent.post("/todos").send({
-      title: "play cricket",
-      dueDate: new Date().toISOString(),
-      completed: false,
-      _csrf: csrfToken,
-    });
-
+    
+    //using privious used test casse status
     const Todos = await agent.get("/todos").set("Accept", "application/json");
     const parseTodos = JSON.parse(Todos.text);
     const countTodaysTodos = parseTodos.dueToday.length;
     const Todo = parseTodos.dueToday[countTodaysTodos - 1];
-    const status = Todo.completed ? true : false;
-    res = await agent.get("/todos");
-    csrfToken = getCsrfToken(res);
-
+    const status = false;
+  
     const changeTodo = await agent
       .put(`/todos/${Todo.id}`)
       .send({ _csrf: csrfToken, completed: status });
